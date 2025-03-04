@@ -1,0 +1,9 @@
+.detect-sudoku {
+  position: relative;
+
+  video, canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}

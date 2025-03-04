@@ -1,0 +1,8 @@
+#root {
+  display: flex;
+}
+
+.app-container {
+  flex: 1;
+  margin: 1em 2em;
+}
