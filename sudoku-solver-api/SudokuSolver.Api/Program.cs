@@ -1,15 +1,22 @@
+using Microsoft.Extensions.ML;
+using Microsoft.ML.Data;
+using SudokuSolver_Api;
+using SudokuSolver.Api.Detector;
 using SudokuSolver.Api.Solver;
 using SudokuSolver.Api.Solver.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddPredictionEnginePool<SudokuDetector.ModelInput, SudokuDetector.ModelOutput>()
+    .FromFile("SudokuDetector.mlnet");
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAntiforgery();
 
 var app = builder.Build();
 
+app.UseAntiforgery();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -17,7 +24,34 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+
+// Define prediction route & handler
+app.MapPost("/detect",
+    async (PredictionEnginePool<SudokuDetector.ModelInput, SudokuDetector.ModelOutput> predictionEnginePool, IFormFile uploadedImage) =>
+    {
+        var image = MLImage.CreateFromStream(uploadedImage.OpenReadStream());
+        var input = new SudokuDetector.ModelInput
+        {
+            Image = image,
+        };
+
+        var modelOutput = predictionEnginePool.Predict(input);
+
+        var bestScoreIndex = modelOutput.Score.ToList().IndexOf(modelOutput.Score.Max());
+
+        var result = new DetectedSudoku
+        {
+            Score = modelOutput.Score[bestScoreIndex],
+            Box = [
+                modelOutput.PredictedBoundingBoxes[bestScoreIndex * 4],
+                modelOutput.PredictedBoundingBoxes[bestScoreIndex * 4 + 1],
+                modelOutput.PredictedBoundingBoxes[bestScoreIndex * 4 + 2],
+                modelOutput.PredictedBoundingBoxes[bestScoreIndex * 4 + 3]
+            ]
+        };
+        return await Task.FromResult(result);
+    })
+    .DisableAntiforgery();
 
 app.MapPost("/solve", (ushort?[] numbers) =>
 {

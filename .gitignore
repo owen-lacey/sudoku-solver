@@ -132,8 +132,10 @@ dist
 
 .idea
 
+.vs
+
 obj
 
 bin
 
-*.DotSettings.user
+*.user
