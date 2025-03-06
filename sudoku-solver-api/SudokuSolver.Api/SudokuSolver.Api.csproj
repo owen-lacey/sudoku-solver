@@ -12,11 +12,18 @@
     <PackageReference Include="Microsoft.ML" Version="4.0.0" />
     <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="4.0.0" />
     <PackageReference Include="Microsoft.ML.TorchSharp" Version="0.22.0" />
+    <PackageReference Include="Microsoft.ML.Vision" Version="4.0.0" />
+    <PackageReference Include="SciSharp.TensorFlow.Redist" Version="2.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="TorchSharp-cpu" Version="0.102.7" />
   </ItemGroup>
   <ItemGroup Label="SudokuDetector">
     <None Include="SudokuDetector.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup Label="DigitDetector">
+    <None Include="DigitDetector.mlnet">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

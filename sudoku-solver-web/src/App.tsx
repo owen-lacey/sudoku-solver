@@ -5,7 +5,9 @@ function App() {
 
     return (
         <div className="app-container">
-            <DetectSudoku/>
+            <div className="wizard">
+                <DetectSudoku/>
+            </div>
         </div>
     )
 }
